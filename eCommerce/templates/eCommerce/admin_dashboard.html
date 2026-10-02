@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{%load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>🛒 Administrator Dashboard</title>
+            <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5>Users</h5>
+                        <h3>{{ user_count }}</h3>
+                        <a href="{% url 'eCommerce:user_list' %}">Manage Users
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5>Vendors</h5>
+                        <h3>{{ vendor_count }}</h3>
+                        <a href="{% url 'eCommerce:vendor_list' %}">Manage Vendors
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5>Orders</h5>
+                        <h3>{{ order_count }}</h3>
+                        <a href="{% url 'eCommerce:order_list' %}">View Orders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+        <form method="POST"
+                action="{% url 'grabsomore:logout' %}"
+                style="margin-top:15px;">
+                {% csrf_token %}
+                <button type="submit"
+                        class="btn btn-danger">
+                    Logout
+                </button>
+            </form>
+        </div>
+    </body>
+</html>
+{% endblock %}

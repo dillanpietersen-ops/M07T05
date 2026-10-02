@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Change Product Price</title>
+            <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+    <body>
+        <form method="POST">
+            {% csrf_token %}
+            <label>Product name:</label>
+            <select name="product" required>
+                {% for product in products %}
+                    <option value="{{ product.id }}">
+                        {{ product.name }}
+                    </option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <label>New price:</label>
+            <input type="text" name="new_price" required>
+            <br><br>
+            <button type="submit">Update Price</button>
+        </form>
+        <!-- Navigation Buttons -->
+        <div style="margin-top: 20px;">
+            <a href="{% url 'eCommerce:products_list' %}">
+                <button>🏪 Back to Catalog</button>
+            </a>
+            <a href="{% url 'eCommerce:main_cart_page' %}">
+                <button>🛒 View Cart</button>
+            </a>
+        </div>
+        <div>
+            <form method="POST"
+              action="{% url 'grabsomore:logout' %}"
+              style="margin-top:15px;">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger">Logout
+            </button>
+        </form>
+        </div>
+    </body>
+</html>
+{% endblock %}

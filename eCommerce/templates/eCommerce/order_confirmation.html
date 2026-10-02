@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<div class="container mt-4">
+    <div class="alert alert-success">
+        <h1 class="h3 text-success">✅ Order Confirmed</h1>
+        <p>
+            Thank you, {{ order.full_name }}.
+            Your order was placed successfully.
+        </p>
+    </div>
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <p>
+                <strong>Order number:</strong>
+                {{ order.id }}
+            </p>
+            <p>
+                <strong>Status:</strong>
+                {{ order.get_status_display }}
+            </p>
+            <p>
+                <strong>Delivery address:</strong>
+                {{ order.delivery_address }}
+            </p>
+            <h2 class="h5">Items</h2>
+
+            {% for item in order.items.all %}
+            <div class="mb-2">
+                <strong>{{ item.product_name }}</strong><br>
+                Quantity: {{ item.quantity }}<br>
+                Total: R {{ item.get_total }}
+            </div>
+            {% endfor %}
+            <hr>
+            <h2 class="h5">
+                Total: R {{ order.total_price }}
+            </h2>
+            <hr>
+            <div class="mt-3">
+                <a class="btn btn-primary"
+                href="{% url 'eCommerce:products_list' %}">
+                    🛒 Continue Shopping
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<div>
+    <form method="POST"
+              action="{% url 'grabsomore:logout' %}"
+              style="margin-top:15px;">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger">
+                Logout
+            </button>
+        </form>
+</div>
+{% endblock %}

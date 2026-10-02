@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Stock Management</h2>
+        </div>
+    </head>
+    <body>
+        <h3>{{ product.name }}</h3>
+        <p>Current Stock: {{ product.stock }}</p>
+        <form method="POST">
+            {% csrf_token %}
+            <label for="stock_quantity">
+                New Stock Quantity
+            </label>
+            <input
+                type="number"
+                name="stock"
+                id="stock"
+                min="0"
+                value="{{ product.stock }}">
+                <button type="submit">
+                Update
+                </button>
+        </form>
+        <div>
+            <form method="POST"
+                    action="{% url 'eCommerce:product_list' %}">
+                    {% csrf_token %}
+                    <button type="submit">
+                        Back to Products
+                    </button>
+                </form>
+        </div>
+    </body>
+</html>
+{% endblock %}

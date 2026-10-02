@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>🛒 Your Shopping Cart</h2>
+</div>
+</head>
+<body>
+<p>User: {{ user.username }}</p>
+<p>Authenticated: {{ user.is_authenticated }}</p>
+<p>Role: {{ user.userprofile.role }}</p>
+    {% if cart %}
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Product Name</th>
+                    <th>Description</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in cart %}
+                    <tr>
+                        <td>{{ item.product.name }}</td>
+                        <td>{{ item.product.description }}</td>
+                        <td>R{{ item.product.price }}</td>
+                        <td>{{ item.quantity }}</td>
+                        <td>R{{ item.subtotal }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+{% if user.is_authenticated and cart %}
+    <a href="{% url 'eCommerce:checkout' %}">
+       <button type ="submit" style="background-color:green; color:white">
+        Checkout </button>
+    </a>
+{% endif %}
+        <p><strong>Total Items:</strong> {{ cart|length }}</p>
+        <p><strong>Total Price:</strong> R{{ total_price }}</p>
+    {% else %}
+        <p>Your cart is empty.</p>
+    {% endif %}
+    <br>
+    <!-- Navigation Buttons -->
+    <div style="margin-top: 20px;">
+        <a href="{% url 'eCommerce:products_list' %}">
+            <button>🏪 Continue Shopping</button>
+        </a>
+
+        {% if user.userprofile.role in 'VENDOR ADMIN' %}
+        <a href="{% url 'eCommerce:change_price' %}">
+            <button>💰 Change Price</button>
+        </a>
+        {% endif %}
+
+        <form method="POST" action="{% url 'eCommerce:clear_cart' %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="background-color:red; color:white;">
+                🗑️ Clear Cart</button>
+        </form>
+    </div>
+<div>
+    <form method="POST"
+              action="{% url 'grabsomore:logout' %}"
+              style="margin-top:15px;">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger">
+                Logout
+            </button>
+        </form>
+</div>
+</body>
+</html>
+{% endblock %}
+

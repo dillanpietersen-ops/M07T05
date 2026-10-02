@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Product Page</h2>
+        </div>
+    </head>
+    <body>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
+        {% if product %}
+            <h2>{{ product.name }}</h2>
+            <p><strong>Description:</strong> {{ product.description }}</p>
+            <p><strong>Price:</strong> R{{ product.price }}</p>
+            <p><strong>Stock:</strong> {{ product.stock }}</p>
+        {% else %}
+            <form method="POST">
+                {% csrf_token %}
+                <label for="product">Enter product name:</label>
+                <input type="text" id="product" name="product" required />
+                <button type="submit">View Product</button>
+            </form>
+        {% endif %}
+        {% if user.is_authenticated and product %}
+        <div class="mb-3">
+            <span class="badge bg-warning text-dark">
+                Rating:
+                {{ product.average_rating|floatformat:1 }}/5
+            </span>
+        </div>
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4>Leave a Review</h4>
+                    <form method="POST" action="{% url 'eCommerce:add_review' product.id %}">
+                    {% csrf_token %}
+                    {% if review_form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>The review could not be submitted:</strong>
+                            {{ review_form.errors }}
+                        </div>
+                    {% endif %}
+                        <div class="mb-3">
+                            <label>Rating:</label>
+                        </div>
+                            {{ review_form.rating }}
+                            {{ review_form.rating.errors }}
+                            <div class="mb-3">
+                            <label>Comment:</label>
+                            {{ review_form.comment }}
+                            {{ review_form.comment.errors }}
+                        </div>
+                        <button type="submit">
+                            Submit Review
+                        </button>
+                    </form>
+                </div>  
+            </div>
+        </div>
+        <div class="mt-4">
+        <h2>Customer Reviews</h2>
+        <p>
+            <strong>{{ review_count }}</strong> customer review{{ review_count|pluralize }}
+        </p>
+        {% for review in reviews %}
+                <div class="customer-review">
+                    <p>
+                        <strong>Rating:</strong>
+                        {{ review.rating }}/5
+                    </p>
+                    <p>
+                        <strong>Comment:</strong>
+                        {{ review.comment }}
+                    </p>
+                    <p>
+                        <small>
+                            Submitted by {{ review.user.username }}
+
+                            {% if review.verified_purchase %}
+                                <span style="color: green;">
+                                    ✓ Verified Purchase
+                                </span>
+                            {% else %}
+                                <span style="color: orange;">
+                                    ⚠ Unverified Purchase
+                                </span>
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+            {% empty %}
+                <p>No reviews yet.</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+        <br>
+        <!-- Navigation Buttons -->
+        <div style="margin-top: 20px;">
+        <a href="{% url 'eCommerce:products_list' %}">
+            <button>🏪 Back to Catalog</button>
+        </a>
+        <a href="{% url 'eCommerce:main_cart_page' %}">
+            <button>🛒 View Cart</button>
+        </a>
+        {% if is_vendor %}
+        <a href="{% url 'eCommerce:change_price' %}">
+            <button>💰 Change Price</button>
+        </a>
+        {% endif %}
+        </div>
+        </br>
+        <div style="margin-top: 20px;">
+            <a href="{% url 'grabsomore:welcome' %}"><button>🏠 Back Home</button>
+            </a>
+        </div>
+        <div>
+        <form method="POST"
+            action="{% url 'grabsomore:logout' %}"
+            style="margin-top:15px;">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn btn-danger">
+                Logout
+            </button>
+        </form>
+        </div>
+    </body>
+</html>
+{% endblock %}

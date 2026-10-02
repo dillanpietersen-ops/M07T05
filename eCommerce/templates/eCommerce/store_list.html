@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h1>Store Management</h1>
+
+<p>
+    <a href="{% url 'eCommerce:vendor_dashboard' %}">
+        Back to Dashboard
+    </a>
+    <a href="{% url 'eCommerce:create_store' %}">
+        Add New Store
+    </a>
+</p>
+<table>
+    <thead>
+        <tr>
+            <th>Store Name</th>
+            <th>Description</th>
+            <th>Products</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for store in stores %}
+        <tr>
+            <td>{{ store.name }}</td>
+            <td>{{ store.description }}</td>
+            <td>{{ store.product_set.count }}</td>
+            <td>
+                <a href="{% url 'eCommerce:update_store' store.id %}">
+                    Edit
+                </a>
+                <a href="{% url 'eCommerce:delete_store' store.id %}">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
+
+

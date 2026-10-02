@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+<h2>My Products</h2>
+<a href="{% url 'eCommerce:vendor_dashboard' %}">
+    Back to Dashboard
+</a>
+<a href="{% url 'eCommerce:create_product' %}">
+    Add New Product
+</a>
+<hr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Store</th>
+            <th>Price</th>
+            <th>Stock</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for product in products %}
+        <tr>
+            <td>{{ product.name }}</td>
+            <td>{{ product.store.name }}</td>
+            <td>R{{ product.price }}</td>
+            <td>{{ product.stock }}</td>
+            <td>
+                <a href="{% url 'eCommerce:update_product' product.id %}">
+                    Edit
+                </a>
+                <a href="{% url 'eCommerce:delete_product' product.id %}">
+                    Delete
+                </a>
+            </td>
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="4">
+                No products available.
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
