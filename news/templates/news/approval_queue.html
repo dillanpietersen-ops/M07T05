@@ -1,10 +1,7 @@
 {% extends "base.html" %}
-
 {% block title %}Approval Queue{% endblock %}
-
 {% block content %}
 <h1>Approval Queue</h1>
-
 <table>
     <thead>
     <tr>
@@ -16,12 +13,10 @@
     </tr>
     </thead>
     <tbody>
-
     {% for article in pending_articles %}
     <tr>
         <td>{{ article.title }}</td>
         <td>{{ article.author.username }}</td>
-
         <td>
             {% if article.publisher %}
                 {{ article.publisher.name }}
@@ -29,9 +24,7 @@
                 Independent
             {% endif %}
         </td>
-
         <td>{{ article.created_at }}</td>
-
         <td>
             {% url 'news:article-detail' article.pk %}
                 Review
