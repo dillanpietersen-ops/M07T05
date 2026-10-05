@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}Delete Article{% endblock %}
+
+{% block content %}
+<h1>Delete Article</h1>
+
+<p>
+    Are you sure you want to delete:
+    <strong>{{ article.title }}</strong>?
+</p>
+
+<form method="post">
+    {% csrf_token %}
+
+    <button type="submit">
+        Yes, Delete
+    </button>
+
+    <a href="{% url 'news:article-detail' article.pk %}">
+        Cancel
+    </a>
+</form>
+{% endblock %}

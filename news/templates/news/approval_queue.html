@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Approval Queue{% endblock %}
+
+{% block content %}
+<h1>Approval Queue</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Title</th>
+        <th>Journalist</th>
+        <th>Source</th>
+        <th>Date</th>
+        <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    {% for article in pending_articles %}
+    <tr>
+        <td>{{ article.title }}</td>
+        <td>{{ article.author.username }}</td>
+
+        <td>
+            {% if article.publisher %}
+                {{ article.publisher.name }}
+            {% else %}
+                Independent
+            {% endif %}
+        </td>
+
+        <td>{{ article.created_at }}</td>
+
+        <td>
+            {% url 'news:article-detail' article.pk %}
+                Review
+            </a>
+            <form method="post"
+                action="{% url 'news:article-approve' article.pk %}">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    Approve
+                </button>
+            </form>
+            {% url 'news:article-update' article.pk %}
+                Edit
+            </a>
+        </td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="5">No articles awaiting approval.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

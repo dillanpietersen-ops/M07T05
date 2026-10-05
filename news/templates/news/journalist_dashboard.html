@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Journalist Dashboard{% endblock %}
+
+{% block content %}
+<h1>Journalist Dashboard</h1>
+
+<p>Welcome {{ request.user.username }}</p>
+
+<h2>My Articles</h2>
+
+{% for article in articles %}
+    <p>
+        {{ article.title }}
+        ({{ article.get_status_display }})
+
+        <a href="{% url 'news:article-detail' article.pk %}"> 
+            View
+        </a>
+        <a href="{% url 'news:article-update' article.pk %}">
+            Edit
+        </a>
+        {% if article.status == "DRAFT" %}
+        <form method= "post"
+            action="{% url 'news:article-submit' article.pk %}" 
+            style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">
+                Submit for Approval
+             </button>
+        </form>
+         {% endif %}
+    </p>
+{% empty %}
+    <p>No articles found.</p>
+{% endfor %}
+
+<h2>My Newsletters</h2>
+
+{% for newsletter in newsletters %}
+    <p>{{ newsletter.title }}</p>
+{% empty %}
+    <p>No newsletters available.</p>
+{% endfor %}
+
+{% endblock %}

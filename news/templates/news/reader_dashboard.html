@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}Reader Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Reader Dashboard</h1>
+
+<div class="row g-4">
+    <section class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Latest approved articles</h2>
+            </div>
+            <div class="card-body">
+                {% for article in latest_articles %}
+                    <article class="border-bottom pb-3 mb-3">
+                        <h3 class="h6">{{ article.title }}</h3>
+                        <p class="text-muted small">
+                            {{ article.created_at|date:"d M Y H:i" }}
+                        </p>
+                        <a href="{% url 'news:article-detail' article.pk %}">
+                            Read article
+                        </a>
+                    </article>
+                {% empty %}
+                    <p class="text-muted">No approved articles are available.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+
+    <section class="col-lg-6">
+        <div class="card h-100">
+            <div class="card-header">
+                <h2 class="h5 mb-0">Subscribed content</h2>
+            </div>
+            <div class="card-body">
+                {% for article in subscribed_articles %}
+                    <article class="border-bottom pb-3 mb-3">
+                        <h3 class="h6">{{ article.title }}</h3>
+                        <a href="{% url 'news:article-detail' article.pk %}">
+                            Read article
+                        </a>
+                    </article>
+                {% empty %}
+                    <p class="text-muted">
+                        Subscribe to publishers or journalists to build this feed.
+                    </p>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}

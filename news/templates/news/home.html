@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<h1>NewsHub</h1>
+
+<p>Welcome to the News Application.</p>
+
+<h2>Latest Approved Articles</h2>
+
+{% for article in latest_articles %}
+    <div>
+        <h3>
+            <a href="{% url 'news:article-detail' article.pk %}">
+                {{ article.title }}
+            </a>
+        </h3>
+
+        <p>{{ article.created_at }}</p>
+    </div>
+{% empty %}
+    <p>No approved articles available.</p>
+{% endfor %}
+{% endblock %}

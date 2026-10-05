@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual envir*nment
+.venv/
+venv/
+env/
+
+# Environ*ent variables
+.env
+
+# VS Code
+.vsc*de/
+
+# Database
+*.sqlite3
+
+#*Static*cache
+staticfiles*
+
+* Sphinx build cache
+docs*_build*
+
+# Pytest
+.pytest_cache/
+
+# Cover*ge
+.coverage*htmlcov/
+
+# OS files
+.DS*Store
+Thumbs.db

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Editor Dashboard</h1>
+<table class="table table-hover align-middle">
+    <thead>
+        <tr>
+            <th>Article</th>
+            <th>Journalist</th>
+            <th>Source</th>
+            <th>Submitted</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for article in pending_articles %}
+            <tr>
+                <td>{{ article.title }}</td>
+                <td>{{ article.author.username }}</td>
+                <td>
+                    {% if article.publisher %}
+                        {{ article.publisher.name }}
+                    {% else %}
+                        Independent
+                    {% endif %}
+                </td>
+                <td>{{ article.created_at|date:"d M Y H:i" }}</td>
+                <td class="text-end">
+                    <a href="{% url 'news:article-detail' article.pk %}">
+                        Review
+                    </a>
+                    <form method="post" action="{% url 'news:article-approve' article.pk %}">
+                        {% csrf_token %}
+                        <button class="btn btn-success btn-sm">
+                            Approve
+                        </button>
+                    </form>
+
+                    <a href="{% url 'news:article-update' article.pk %}">
+                        Edit
+                    </a>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted py-4">
+                    No articles are awaiting approval.
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
