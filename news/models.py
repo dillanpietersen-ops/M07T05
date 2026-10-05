@@ -6,7 +6,7 @@ from django.db import models
 
 
 class CustomUser(AbstractUser):
-    """Represent an authenticated news application user."""
+    """Custom user model supporting role-based access control."""
     class Role(models.TextChoices):
         """Available application roles."""
         # Reader: can only view articles and newsletters.
@@ -73,8 +73,7 @@ class CustomUser(AbstractUser):
 
 
 class Publisher(models.Model):
-    """Represent a publisher containing editors and journalists."""
-
+    """Represents a publisher responsible for newsletters and articles."""
     name = models.CharField(max_length=200, unique=True)
     description = models.TextField(blank=True)
     editors = models.ManyToManyField(
@@ -152,11 +151,7 @@ class Article(models.Model):
 
 
 class Newsletter(models.Model):
-    """Represent a curated collection of approved articles.
-
-    Created by journalists.
-    """
-
+    """Represents a newsletter distributed to subscribed readers."""
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
