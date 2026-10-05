@@ -38,6 +38,7 @@ def get_queryset(self):
 
     return queryset
 
+
 """One dashboard route that chooses the template according to
  the authenticated user's role.
 """
@@ -46,7 +47,6 @@ def get_queryset(self):
 @login_required
 def dashboard(request):
     """Display the dashboard matching the authenticated user's role."""
-
     user = request.user
     print("USERNAME:", user.username)
     print("ROLE:", user.role)
@@ -64,7 +64,6 @@ def dashboard(request):
             Q(publisher__in=user.subscribed_publishers.all())
             | Q(journalist__in=user.subscribed_journalists.all())
         ).distinct()
-
         context = {
             "latest_articles": approved_articles[:10],
             "subscribed_articles": subscribed_articles[:10],
@@ -77,7 +76,6 @@ def dashboard(request):
             )[:10],
         }
         return render(request, "news/reader_dashboard.html", context)
-
     if user.role == CustomUser.Role.JOURNALIST:
         print("LOADING JOURNALIST DASHBOARD")
 
@@ -90,13 +88,11 @@ def dashboard(request):
                 author=user
             ).prefetch_related("articles"),
         }
-
         return render(
             request,
             "news/journalist_dashboard.html",
             context,
         )
-
     if user.role == CustomUser.Role.EDITOR:
         context = {
             "pending_articles": Article.objects.filter(
@@ -108,7 +104,6 @@ def dashboard(request):
             ),
         }
         return render(request, "news/editor_dashboard.html", context)
-
     return render(request, "news/access_denied.html", status=403)
 
 
@@ -120,7 +115,6 @@ def article_submit(request, pk):
         pk=pk,
         author=request.user,
     )
-
     article.status = Article.Status.PENDING
     article.save(update_fields=["status"])
 
@@ -128,29 +122,24 @@ def article_submit(request, pk):
         request,
         "Article submitted for approval."
     )
-
     return redirect("news:dashboard")
 
 
 @login_required
 def article_create(request):
     """Create an unapproved article for the journalist."""
-
     if request.user.role != CustomUser.Role.JOURNALIST:
         return HttpResponseForbidden(
             "Only journalists may create articles."
         )
-
     if request.method == "POST":
         form = ArticleForm(request.POST, user=request.user)
-
         if form.is_valid():
             article = form.save()
             messages.success(request, "Article saved as a draft.")
             return redirect("news:article-detail", pk=article.pk)
     else:
         form = ArticleForm(user=request.user)
-
     return render(
         request,
         "news/article_form.html",
@@ -160,7 +149,6 @@ def article_create(request):
 
 def home(request):
     """Display the public home page."""
-
     latest_articles = Article.objects.filter(
         status=Article.Status.APPROVED
     ).select_related(
@@ -168,7 +156,6 @@ def home(request):
         "journalist",
         "publisher",
     ).order_by("-created_at")[:10]
-
     return render(
         request,
         "news/home.html",
@@ -189,7 +176,6 @@ def article_list(request):
             "status"
         )
     )
-
     if (
         request.user.is_authenticated
         and request.user.role == CustomUser.Role.JOURNALIST
@@ -201,7 +187,6 @@ def article_list(request):
         articles = Article.objects.filter(
             status=Article.Status.APPROVED
         )
-
     return render(
         request,
         "news/article_list.html",
@@ -213,12 +198,10 @@ def article_list(request):
 
 def article_detail(request, pk):
     """Display a single article."""
-
     article = get_object_or_404(
         Article,
         pk=pk,
     )
-
     return render(
         request,
         "news/article_detail.html",
@@ -237,19 +220,16 @@ def article_detail(request, pk):
 @login_required
 def article_update(request, pk):
     """Update an existing article."""
-
     article = get_object_or_404(
         Article,
         pk=pk,
     )
-
     if request.user != article.author and (
         request.user.role != CustomUser.Role.EDITOR
     ):
         return HttpResponseForbidden(
             "You do not have permission to edit this article."
         )
-
     return render(
         request,
         "news/article_form.html",
@@ -263,12 +243,10 @@ def article_update(request, pk):
 @login_required
 def article_delete(request, pk):
     """Delete an article."""
-
     article = get_object_or_404(
         Article,
         pk=pk,
     )
-
     if (
         request.user != article.author
         and request.user.role != CustomUser.Role.EDITOR
@@ -276,7 +254,6 @@ def article_delete(request, pk):
         return HttpResponseForbidden(
             "You do not have permission to delete this article."
         )
-
     if request.method == "POST":
         article.delete()
 
@@ -284,9 +261,7 @@ def article_delete(request, pk):
             request,
             "Article deleted successfully.",
         )
-
         return redirect("news:dashboard")
-
     return render(
         request,
         "news/article_confirm_delete.html",
@@ -305,12 +280,10 @@ def article_approve(request, pk):
         Article,
         pk=pk,
     )
-
     if request.user.role != CustomUser.Role.EDITOR:
         return HttpResponseForbidden(
             "Only editors may approve articles."
         )
-
     if article.status == Article.Status.APPROVED:
         messages.info(
             request,
@@ -318,30 +291,22 @@ def article_approve(request, pk):
         )
         return redirect("news:approval-queue")
 
-    print("APPROVE VIEW HIT")
-    print("ARTICLE:", article.title)
-    print("STATUS BEFORE:", article.status)
     article.status = Article.Status.APPROVED
-    print("STATUS AFTER:", article.status)
     article.save(update_fields=["status"])
-
     messages.success(
         request,
         f'"{article.title}" approved successfully.',
     )
-
     return redirect("news:approval-queue")
 
 
 @login_required
 def approval_queue(request):
     """Display articles awaiting approval."""
-
     if request.user.role != CustomUser.Role.EDITOR:
         return HttpResponseForbidden(
             "Only editors may access the approval queue."
         )
-
     pending_articles = (
         Article.objects.filter(
             status=Article.Status.PENDING
@@ -353,7 +318,6 @@ def approval_queue(request):
         )
         .order_by("created_at")
     )
-
     return render(
         request,
         "news/approval_queue.html",
@@ -365,14 +329,12 @@ def approval_queue(request):
 
 def newsletter_list(request):
     """Display all newsletters."""
-
     newsletters = (
         Newsletter.objects
         .select_related("author")
         .prefetch_related("articles")
         .order_by("-created_at")
     )
-
     return render(
         request,
         "news/newsletter_list.html",
@@ -390,34 +352,28 @@ def newsletter_create(request):
         return HttpResponseForbidden(
             "Only journalists may create newsletters."
         )
-
     if request.method == "POST":
         form = NewsletterForm(
             request.POST,
             user=request.user,
         )
-
         if form.is_valid():
             newsletter = form.save(commit=False)
             newsletter.author = request.user
             newsletter.save()
             form.save_m2m()
-
             messages.success(
                 request,
                 "Newsletter created successfully."
             )
-
             return redirect(
                 "news:newsletter-detail",
                 pk=newsletter.pk,
             )
-
     else:
         form = NewsletterForm(
             user=request.user,
         )
-
     return render(
         request,
         "news/newsletter_form.html",
@@ -431,24 +387,19 @@ def newsletter_create(request):
 
 def newsletter_detail(request, pk):
     """Display a newsletter and its articles."""
-
     newsletter = get_object_or_404(
         Newsletter.objects.prefetch_related("articles"),
         pk=pk,
     )
-
     articles = newsletter.articles.filter(
         status=Article.Status.APPROVED
     )
-
     can_manage = False
-
     if request.user.is_authenticated:
         can_manage = (
             request.user == newsletter.author
             or request.user.role == CustomUser.Role.EDITOR
         )
-
     return render(
         request,
         "news/newsletter_detail.html",
@@ -463,12 +414,10 @@ def newsletter_detail(request, pk):
 @login_required
 def newsletter_update(request, pk):
     """Update an existing newsletter."""
-
     newsletter = get_object_or_404(
         Newsletter,
         pk=pk,
     )
-
     if (
         request.user != newsletter.author
         and request.user.role != CustomUser.Role.EDITOR
@@ -476,32 +425,27 @@ def newsletter_update(request, pk):
         return HttpResponseForbidden(
             "You do not have permission to edit this newsletter."
         )
-
     if request.method == "POST":
         form = NewsletterForm(
             request.POST,
             instance=newsletter,
             user=request.user,
         )
-
         if form.is_valid():
             form.save()
             messages.success(
                 request,
                 "Newsletter updated successfully."
             )
-
             return redirect(
                 "news:newsletter-detail",
                 pk=newsletter.pk,
             )
-
     else:
         form = NewsletterForm(
             instance=newsletter,
             user=request.user,
         )
-
     return render(
         request,
         "news/newsletter_form.html",
@@ -517,12 +461,10 @@ def newsletter_update(request, pk):
 @login_required
 def newsletter_delete(request, pk):
     """Delete a newsletter."""
-
     newsletter = get_object_or_404(
         Newsletter,
         pk=pk,
     )
-
     if (
         request.user != newsletter.author
         and request.user.role != CustomUser.Role.EDITOR
@@ -530,19 +472,14 @@ def newsletter_delete(request, pk):
         return HttpResponseForbidden(
             "You do not have permission to delete this newsletter."
         )
-
     if request.method == "POST":
         newsletter_title = newsletter.title
-
         newsletter.delete()
-
         messages.success(
             request,
             f'Newsletter "{newsletter_title}" deleted successfully.'
         )
-
         return redirect("news:dashboard")
-
     return render(
         request,
         "news/newsletter_confirm_delete.html",
