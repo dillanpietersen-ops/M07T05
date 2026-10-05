@@ -1,14 +1,9 @@
 {% extends "base.html" %}
-
 {% block title %}Home{% endblock %}
-
 {% block content %}
 <h1>NewsHub</h1>
-
 <p>Welcome to the News Application.</p>
-
 <h2>Latest Approved Articles</h2>
-
 {% for article in latest_articles %}
     <div>
         <h3>

@@ -1,37 +1,42 @@
 {% extends "base.html" %}
-
 {% block title %}Newsletter{% endblock %}
-
 {% block content %}
 <h1>{{ page_title }}</h1>
-
 <form method="post">
     {% csrf_token %}
-
     {% if form.non_field_errors %}
         {{ form.non_field_errors }}
     {% endif %}
-
     {% for field in form %}
         <div>
             <label>
                 {{ field.label }}
             </label>
-
             <br>
-
             {{ field }}
-
+            {% if field.help_text %}
+                <small>{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+                <ul style="color:red;">
+                    {% for error in field.errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+            {% for error in field.errors %}
+                <p style="color:red;">
+                    {{ error }}
+                </p>
+            {% endfor %}
             {% for error in field.errors %}
                 <p style="color:red;">
                     {{ error }}
                 </p>
             {% endfor %}
         </div>
-
         <br>
     {% endfor %}
-
     <button type="submit">
         {{ submit_label }}
     </button>

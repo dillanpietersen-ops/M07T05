@@ -1,20 +1,14 @@
 {% extends "base.html" %}
-
 {% block title %}Subscriptions{% endblock %}
-
 {% block content %}
 <h1>Subscription Management</h1>
-
 <h2>Publishers</h2>
-
 {% for publisher in publishers %}
     <div>
         {{ publisher.name }}
-
         <form method="post"
               action="{% url 'news:toggle-publisher-subscription' publisher.pk %}">
             {% csrf_token %}
-
             {% if publisher.id in subscribed_publisher_ids %}
                 <button type="submit">
                     Unsubscribe
@@ -29,19 +23,13 @@
 {% empty %}
     <p>No publishers available.</p>
 {% endfor %}
-
 <hr>
-
 <h2>Journalists</h2>
-
 {% for journalist in journalists %}
     <div>
-
         {{ journalist.username }}
-
         <form method="post"
               action="{% url 'news:toggle-journalist-subscription' n %}">
-
             {% if journalist.id in subscribed_journalist_ids %}
                 <button type="submit">
                     Unsubscribe
@@ -51,11 +39,8 @@
                     Subscribe
                 </button>
             {% endif %}
-
         </form>
-
     </div>
-
 {% empty %}
     <p>No journalists available.</p>
 {% endfor %}

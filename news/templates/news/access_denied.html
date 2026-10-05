@@ -1,27 +1,18 @@
 {% extends "base.html" %}
-
 {% block title %}Access Denied{% endblock %}
-
 {% block content %}
-
 <div class="container mt-5">
-
     <div class="card border-danger">
-
         <div class="card-header bg-danger text-white">
             Access Denied
         </div>
-
         <div class="card-body">
-
             <h2 class="card-title">
                 Permission Required
             </h2>
-
             <p class="card-text">
                 You do not have permission to access the requested page.
             </p>
-
             {% if user.is_authenticated %}
                 <p>
                     <strong>User:</strong>
@@ -31,15 +22,10 @@
                     {{ user.get_role_display }}
                 </p>
             {% endif %}
-
             <a href="{% url 'news:dashboard' %}">
                 Return to Dashboard
             </a>
-
         </div>
-
     </div>
-
 </div>
-
 {% endblock %}

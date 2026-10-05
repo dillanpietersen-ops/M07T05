@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mariadb:11
+
+    volumes:
+      - mariadb_data:/var/lib/mysql
+
+    environment:
+      MYSQL_DATABASE: news_application
+      MYSQL_USER: newsuser
+      MYSQL_PASSWORD: password123
+      MYSQL_ROOT_PASSWORD: rootpassword
+
+  web:
+    build: .
+
+    ports:
+      - "8001:8000"
+
+    depends_on:
+      - db
+
+    environment:
+      DB_HOST: db
+      DB_NAME: news_application
+      DB_USER: newsuser
+      DB_PASSWORD: password123
+      DB_PORT: 3306
+
+    command: >
+      sh -c "
+      sleep 20 &&
+      python manage.py migrate &&
+      python manage.py runserver 0.0.0.0:8000
+      "
+
+volumes:
+  mariadb_data:
